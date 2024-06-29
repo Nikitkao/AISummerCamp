@@ -48,10 +48,16 @@ async def echo_handler(message: Message) -> None:
 
     print('Starting echo_handler')
 
+    input_file = ''
+    output_file = ''
+    speech_file_path = ''
+
     if message.content_type != ContentType.VOICE:
         await message.answer("Доступны только голосовые сообщения")
         return
     
+    print('1')
+
     try:
         file_id = message.voice.file_id
         file = await bot.get_file(file_id)
@@ -61,6 +67,8 @@ async def echo_handler(message: Message) -> None:
 
         await bot.download_file(file_path, f"voice{callbackGuid}.oga")
         
+        print('2')
+
         input_file = f"{pathlib.Path(__file__).parent.resolve()}/voice{callbackGuid}.oga"
         output_file = f"{pathlib.Path(__file__).parent.resolve()}/voice{callbackGuid}.mp3"
         convert_oga_to_mp3(input_file, output_file, 'ogg', 'mp3')
@@ -76,7 +84,9 @@ async def echo_handler(message: Message) -> None:
             model="gpt-4o")
         
         thread = client.beta.threads.create()
- 
+
+        print('3')
+
         client.beta.threads.messages.create(
             thread_id=thread.id,
             role="user",
@@ -111,12 +121,9 @@ async def echo_handler(message: Message) -> None:
         print(e)
         await message.answer("Что-то пошло не так, попробуйте еще раз")
 
-    if speech_file_path:
-        pathlib.Path.unlink(speech_file_path, True)
-    if input_file:
-        pathlib.Path.unlink(input_file, True)
-    if output_file:
-        pathlib.Path.unlink(output_file, True)
+    pathlib.Path.unlink(speech_file_path, True)
+    pathlib.Path.unlink(input_file, True)
+    pathlib.Path.unlink(output_file, True)
 
 async def main() -> None:
     await dp.start_polling(bot)
