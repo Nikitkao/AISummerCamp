@@ -73,12 +73,15 @@ async def echo_handler(message: Message) -> None:
 
         input_file = f"{pathlib.Path(__file__).parent.resolve()}/voice{callbackGuid}.oga"
         output_file = f"{pathlib.Path(__file__).parent.resolve()}/voice{callbackGuid}.mp3"
+        print('3')
         convert_oga_to_mp3(input_file, output_file, 'ogg', 'mp3')
-
+        print('4')
         audio_file = open(output_file, "rb")
+        print('5')
         transcription = client.audio.transcriptions.create(model="whisper-1", file=audio_file)
+        print('6')
         print(transcription.text)
-
+        print('7')
         assistant = client.beta.assistants.create(
             name="Nikita Rakitin",
             instructions="You are a personal assistant. Helping people to solve problems.",
@@ -87,7 +90,7 @@ async def echo_handler(message: Message) -> None:
         
         thread = client.beta.threads.create()
 
-        print('3')
+        print('8')
 
         client.beta.threads.messages.create(
             thread_id=thread.id,
