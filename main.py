@@ -32,8 +32,6 @@ config = Settings()
 TOKEN = config.TELEGRAM_BOT_TOKEN
 OPEN_AI_API_TOKEN = config.OPEN_AI_API_TOKEN
 
-print(f'TOKEN {TOKEN}')
-
 client = OpenAI(api_key=OPEN_AI_API_TOKEN)
 
 dp = Dispatcher()
@@ -68,6 +66,10 @@ async def echo_handler(message: Message) -> None:
         await bot.download_file(file_path, f"voice{callbackGuid}.oga")
         
         print('2')
+
+        print(pathlib.Path(__file__))
+
+        print(pathlib.Path(__file__).parent.resolve())
 
         input_file = f"{pathlib.Path(__file__).parent.resolve()}/voice{callbackGuid}.oga"
         output_file = f"{pathlib.Path(__file__).parent.resolve()}/voice{callbackGuid}.mp3"
