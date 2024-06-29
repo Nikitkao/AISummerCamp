@@ -1,0 +1,4 @@
+pydub
+ffmpeg-downloader
+ffmpeg
+openai
