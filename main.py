@@ -8,7 +8,6 @@ from aiogram.filters import CommandStart
 from aiogram.types import Message, FSInputFile, ContentType
 from pydub import AudioSegment
 import pathlib
-import sys
 from openai import OpenAI
 import uuid
 
@@ -33,7 +32,7 @@ def convert_oga_to_mp3(input_file, output_file, input_format, output_format):
     audio.export(output_file, format=output_format)
     print(f"File converted and saved as {output_file}")
 
-sys.path.append('/path/to/ffmpeg')
+# sys.path.append('/path/to/ffmpeg')
 
 config = Settings()
 TOKEN = config.TELEGRAM_BOT_TOKEN
