@@ -20,8 +20,15 @@ class Settings(BaseSettings):
 
 def convert_oga_to_mp3(input_file, output_file, input_format, output_format):
     # Load the .oga file
+    print('convert_oga_to_mp3')
+    print(f'input_file {input_file}')
+    print(f'output_file {output_file}')
+    print(f'input_format {input_format}')
+    print(f'output_format {output_format}')
     audio = AudioSegment.from_file(input_file, format=input_format)
     
+    print(f'after converting')
+
     # Export as .mp3
     audio.export(output_file, format=output_format)
     print(f"File converted and saved as {output_file}")
