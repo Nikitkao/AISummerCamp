@@ -32,6 +32,8 @@ config = Settings()
 TOKEN = config.TELEGRAM_BOT_TOKEN
 OPEN_AI_API_TOKEN = config.OPEN_AI_API_TOKEN
 
+print(f'TOKEN {TOKEN}')
+
 client = OpenAI(api_key=OPEN_AI_API_TOKEN)
 
 dp = Dispatcher()
@@ -43,6 +45,8 @@ async def command_start_handler(message: Message) -> None:
 
 @dp.message()
 async def echo_handler(message: Message) -> None:
+
+    print('Starting echo_handler')
 
     if message.content_type != ContentType.VOICE:
         await message.answer("Доступны только голосовые сообщения")
@@ -107,9 +111,12 @@ async def echo_handler(message: Message) -> None:
         print(e)
         await message.answer("Что-то пошло не так, попробуйте еще раз")
 
-    pathlib.Path.unlink(speech_file_path, True)
-    pathlib.Path.unlink(input_file, True)
-    pathlib.Path.unlink(output_file, True)
+    if speech_file_path:
+        pathlib.Path.unlink(speech_file_path, True)
+    if input_file:
+        pathlib.Path.unlink(input_file, True)
+    if output_file:
+        pathlib.Path.unlink(output_file, True)
 
 async def main() -> None:
     await dp.start_polling(bot)
