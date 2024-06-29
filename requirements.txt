@@ -1,5 +1,6 @@
 aiogram
 pydantic
+pydantic_settings
 pydub
 ffmpeg-downloader
 ffmpeg

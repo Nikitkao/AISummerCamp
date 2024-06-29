@@ -103,7 +103,8 @@ async def echo_handler(message: Message) -> None:
             await bot.send_voice(chat_id=message.chat.id, voice=FSInputFile(speech_file_path))
         else:
             await message.answer(run.status)
-    except Exception as inst:
+    except Exception as e:
+        print(e)
         await message.answer("Что-то пошло не так, попробуйте еще раз")
 
     pathlib.Path.unlink(speech_file_path, True)
