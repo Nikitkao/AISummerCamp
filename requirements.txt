@@ -1,4 +1,4 @@
+pysoundfile
 aiogram
 pydantic_settings
 openai
-pysoundfile
