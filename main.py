@@ -6,10 +6,10 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
 from aiogram.types import Message, FSInputFile, ContentType
-from pydub import AudioSegment
 import pathlib
 from openai import OpenAI
 import uuid
+import soundfile as sf
 
 class Settings(BaseSettings):
     TELEGRAM_BOT_TOKEN: str
@@ -17,22 +17,9 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_file='settings.env', env_file_encoding='utf-8')
 
-def convert_oga_to_mp3(input_file, output_file, input_format, output_format):
-    # Load the .oga file
-    print('convert_oga_to_mp3')
-    print(f'input_file {input_file}')
-    print(f'output_file {output_file}')
-    print(f'input_format {input_format}')
-    print(f'output_format {output_format}')
-    audio = AudioSegment.from_file(input_file, format=input_format)
-    
-    print(f'after converting')
-
-    # Export as .mp3
-    audio.export(output_file, format=output_format)
-    print(f"File converted and saved as {output_file}")
-
-# sys.path.append('/path/to/ffmpeg')
+def convert_oga_to_mp3(input_file, output_file):
+    data, samplerate = sf.read(input_file)
+    sf.write(output_file, data, samplerate)
 
 config = Settings()
 TOKEN = config.TELEGRAM_BOT_TOKEN
@@ -50,8 +37,6 @@ async def command_start_handler(message: Message) -> None:
 @dp.message()
 async def echo_handler(message: Message) -> None:
 
-    print('Starting echo_handler')
-
     input_file = ''
     output_file = ''
     speech_file_path = ''
@@ -60,8 +45,6 @@ async def echo_handler(message: Message) -> None:
         await message.answer("Доступны только голосовые сообщения")
         return
     
-    print('1')
-
     try:
         file_id = message.voice.file_id
         file = await bot.get_file(file_id)
@@ -71,23 +54,15 @@ async def echo_handler(message: Message) -> None:
 
         await bot.download_file(file_path, f"voice{callbackGuid}.oga")
         
-        print('2')
-
-        print(pathlib.Path(__file__))
-
-        print(pathlib.Path(__file__).parent.resolve())
-
         input_file = f"{pathlib.Path(__file__).parent.resolve()}/voice{callbackGuid}.oga"
-        output_file = f"{pathlib.Path(__file__).parent.resolve()}/voice{callbackGuid}.mp3"
-        print('3')
-        convert_oga_to_mp3(input_file, output_file, 'ogg', 'mp3')
-        print('4')
+        output_file = f"{pathlib.Path(__file__).parent.resolve()}/voice{callbackGuid}.wav"
+
+        convert_oga_to_mp3(input_file, output_file)
+
         audio_file = open(output_file, "rb")
-        print('5')
+
         transcription = client.audio.transcriptions.create(model="whisper-1", file=audio_file)
-        print('6')
-        print(transcription.text)
-        print('7')
+
         assistant = client.beta.assistants.create(
             name="Nikita Rakitin",
             instructions="You are a personal assistant. Helping people to solve problems.",
@@ -95,8 +70,6 @@ async def echo_handler(message: Message) -> None:
             model="gpt-4o")
         
         thread = client.beta.threads.create()
-
-        print('8')
 
         client.beta.threads.messages.create(
             thread_id=thread.id,
