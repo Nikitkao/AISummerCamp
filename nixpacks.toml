@@ -1,2 +1,2 @@
 [phases.setup]
-aptPkgs = ['libsndfile1', 'sndfile']
+aptPkgs = ['libsndfile1', 'libsndfile']
